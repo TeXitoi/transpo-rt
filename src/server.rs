@@ -10,8 +10,8 @@ use std::sync::Mutex;
 pub fn make_context(gtfs: &str, url: &str, generation_period: &Period) -> Context {
     let data = Data::from_path(gtfs, generation_period);
     Context {
-        gtfs_rt: Mutex::new(None),
-        data: Mutex::new(data),
+        gtfs_rt: None,
+        data: data,
         gtfs_rt_provider_url: url.to_owned(),
         feed_construction_info: FeedConstructionInfo {
             feed_path: gtfs.to_owned(),

@@ -32,13 +32,13 @@ fn refresh_needed(previous: &Option<GtfsRT>) -> bool {
         .unwrap_or(true)
 }
 
-pub fn update_gtfs_rt(context: &Context) -> Result<()> {
+pub fn update_gtfs_rt(context: &mut Context) -> Result<()> {
     let _guard = get_gtfs_rt(context)?;
     Ok(())
 }
 
-pub fn get_gtfs_rt(context: &Context) -> Result<MutexGuard<Option<GtfsRT>>> {
-    let mut saved_data = context.gtfs_rt.lock().unwrap();
+pub fn get_gtfs_rt(context: &mut Context) -> Result<&Option<GtfsRT>> {
+    let saved_data = &mut context.gtfs_rt;
     if refresh_needed(&saved_data) {
         *saved_data = Some(GtfsRT {
             data: fetch_gtfs(&context.gtfs_rt_provider_url)?,

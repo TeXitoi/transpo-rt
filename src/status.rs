@@ -20,7 +20,7 @@ impl Handler<Params> for Context {
     fn handle(&mut self, _params: Params, _ctx: &mut actix::Context<Self>) -> Self::Result {
         Ok(Status {
             feed: self.feed_construction_info.feed_path.clone(),
-            loaded_at: self.data.lock().unwrap().loaded_at,
+            loaded_at: self.data.loaded_at,
         })
     }
 }

@@ -76,7 +76,7 @@ impl Handler<Params> for Context {
     type Result = Result<SiriResponse>;
 
     fn handle(&mut self, params: Params, _ctx: &mut actix::Context<Self>) -> Self::Result {
-        let data = self.data.lock().unwrap();
+        let data = &self.data;
         Ok(filter(&data, params))
     }
 }

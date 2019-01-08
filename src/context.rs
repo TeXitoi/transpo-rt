@@ -4,7 +4,6 @@ use chrono::{DateTime, NaiveDate, NaiveDateTime, Utc};
 use chrono_tz::Tz;
 use log::info;
 use navitia_model::collection::Idx;
-use std::sync::Mutex;
 
 pub enum Stop {
     StopPoint(Idx<navitia_model::objects::StopPoint>),
@@ -67,9 +66,9 @@ pub struct FeedConstructionInfo {
 }
 
 pub struct Context {
-    pub gtfs_rt: Mutex<Option<GtfsRT>>,
+    pub gtfs_rt: Option<GtfsRT>,
     pub gtfs_rt_provider_url: String,
-    pub data: Mutex<Data>,
+    pub data: Data,
     pub feed_construction_info: FeedConstructionInfo,
 }
 
@@ -86,7 +85,7 @@ impl Actor for Context {
                 &act.feed_construction_info.feed_path,
                 &act.feed_construction_info.generation_period,
             );
-            *act.data.lock().unwrap() = data;
+            act.data = data;
             info!("Data updated");
         });
     }

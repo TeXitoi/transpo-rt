@@ -148,10 +148,10 @@ fn apply_rt_update(data: &mut Data, gtfs_rt: &transit_realtime::FeedMessage) -> 
     Ok(())
 }
 
-fn apply_latest_rt_update(context: &Context) -> actix_web::Result<()> {
-    let gtfs_rt = context.gtfs_rt.lock().unwrap();
+fn apply_latest_rt_update(context: &mut Context) -> actix_web::Result<()> {
+    let gtfs_rt = &context.gtfs_rt;
 
-    let mut data = context.data.lock().unwrap();
+    let data = &mut context.data;
 
     info!("applying realtime data on the scheduled data");
     let feed_message = gtfs_rt
@@ -166,10 +166,10 @@ fn apply_latest_rt_update(context: &Context) -> actix_web::Result<()> {
         })
         .ok_or_else(|| error::ErrorInternalServerError("impossible to access stored data"))??;
 
-    apply_rt_update(&mut data, &feed_message)
+    apply_rt_update(data, &feed_message)
 }
 
-fn realtime_update(context: &Context) -> actix_web::Result<()> {
+fn realtime_update(context: &mut Context) -> actix_web::Result<()> {
     gtfs_rt_utils::update_gtfs_rt(context).map_err(error::ErrorInternalServerError)?;
 
     apply_latest_rt_update(context)
@@ -179,7 +179,7 @@ fn stop_monitoring(request: &Params, state: &mut Context) -> Result<model::SiriR
     if request.data_freshness == DataFreshness::RealTime {
         realtime_update(state)?;
     }
-    let data = state.data.lock().unwrap();
+    let data = &mut state.data;
 
     let stop_idx = data
         .ntm
